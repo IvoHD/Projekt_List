@@ -415,7 +415,7 @@ void menu()
 		}
 		else {
 			if (Auswahl != 1 || Auswahl != 2 || Auswahl != 3 || Auswahl != 4 || Auswahl != 5 || Auswahl != 6) {
-				printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
+				printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");kkk
 				zurueck();
 			}
 		}
