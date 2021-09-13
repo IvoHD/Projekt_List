@@ -81,7 +81,7 @@ strulist* createList()
 
 			//Elementgenerierung 
 
-			pNew->pData->preis = rand() % (1000 - 10 + 1) + 10 + rand() % (10) / 10.0;
+			pNew->pData->preis = rand() % (999 - 10 + 1) + 10 + rand() % (10) / 10.0;
 
 			if (pStart == NULL) pStart = pNew;
 			if (pLast != NULL) pLast->pNext = pNew;
@@ -280,7 +280,7 @@ void dellist(strulist* list, int* Auswahl)
 	//"Sind Sie sicher"-Warnung
 	if (*Auswahl != 4) {
 		//Warnung und Abfrage Auswahl
-		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen, die Elemente werden unwiederruflich gelöscht?\n\n1) Ja\n2) Nein\n3/4) Ja und nicht mehr anzeigen\n");
+		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen? die Elemente werden unwiederruflich gelöscht.\n\n1) Ja\n2) Nein\n3/4) Ja und nicht mehr anzeigen\n");
 		scanf_s("%i", Auswahl);
 
 		if (*Auswahl == 1) {
@@ -362,6 +362,7 @@ void menu()
 		printf("Folgende Optionen stehen zur Verfuegung: \n\t1) Liste erstellen \n\t2) Liste sortieren\n\t3) Liste ausgeben\n\t4) Liste loeschen\n\t5) Programm beenden\n\nWaehlen Sie einer der aufgelisteten Optionen auf, indem Sie die zugewiesenen Zahlen eingeben.\n");
 		printf("***************************************************\n");
 		//Abfrage Auswahl
+		Auswahl = 0;//Taste bleibt im Debugger stehen
 		scanf_s("%i", &Auswahl);
 		//Weiterleiung zu den jeweiligen Funktionen
 		if (Auswahl == 1) {
@@ -409,15 +410,13 @@ void menu()
 		else if (Auswahl == 5) {
 			Erfolgreich = true;
 		}
-		else if (Auswahl = 6) {
+		else if (Auswahl == 6) {
 			printf("Herzlichen Glueckwunsch, sie haben ein Easteregg endeckt!\n\n");
 			zurueck();
 		}
 		else {
-			if (Auswahl != 1 || Auswahl != 2 || Auswahl != 3 || Auswahl != 4 || Auswahl != 5 || Auswahl != 6) {
-				printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
-				zurueck();
-			}
+			printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
+			zurueck();
 		}
 	} while (Erfolgreich == false);
 }
