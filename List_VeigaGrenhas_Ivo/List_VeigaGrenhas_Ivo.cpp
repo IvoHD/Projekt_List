@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 #include<string>
+#include<conio.h>
 
 //Definition der structs "data" und "list"
 typedef struct data
@@ -18,8 +19,9 @@ typedef struct list
 } strulist;
 
 //Funktion zum zurückgehen
-void zurueck()
+void zurueck(const char *pText = NULL)
 {
+	if (pText != NULL) printf("%s\n", pText);
 	printf("Druecke eine beliebige Taste um zurueck ins Hauptmenu zu kommen.");
 	system("pause > nul");
 }
@@ -111,8 +113,8 @@ void sortlist(strulist* list)
 	do
 	{
 		printf("Bitte geben Sie 1 fuer numerisch sortiert, 2 fuer alphabetisch sortiert und 3 fuer abbrechen ein: ");
-		scanf_s("%i", &Auswahl2);
-
+		Auswahl2 = _getche() - 48;
+		printf("\n");
 	} while (Auswahl2 != 1 && Auswahl2 != 2 && Auswahl2 != 3);
 	//Abfrage aufsteigen, abgsteigend oder abbrechen
 
@@ -122,8 +124,8 @@ void sortlist(strulist* list)
 		do
 		{
 			printf("Bitte geben Sie 1 fuer aufsteigend sortiert, 2 fuer absteigend sortiert und 3 fuer abbrechen ein: ");
-			scanf_s("%i", &Auswahl);
-
+			Auswahl = _getche() - 48;
+			printf("\n");
 		} while (Auswahl != 1 && Auswahl != 2 && Auswahl != 3);
 
 		//Je nach Auswahl Sortierung oder zurück ins Hauptmenu
@@ -180,8 +182,8 @@ void sortlist(strulist* list)
 		do
 		{
 			printf("Bitte geben Sie 1 fuer aufsteigend sortiert, 2 fuer absteigend sortiert und 3 fuer abbrechen ein: ");
-			scanf_s("%i", &Auswahl);
-
+			Auswahl = _getche() - 48;
+			printf("\n");
 		} while (Auswahl != 1 && Auswahl != 2 && Auswahl != 3);
 		//Je nach Auswahl Sortierung oder zurück ins Hauptmenu
 		if (Auswahl == 1) {
@@ -278,10 +280,11 @@ void dellist(strulist* list, int* Auswahl)
 	int Anzahl = getAnzahl(list);
 
 	//"Sind Sie sicher"-Warnung
-	if (*Auswahl != 4) {
+	if (*Auswahl != 3) {
 		//Warnung und Abfrage Auswahl
-		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen? die Elemente werden unwiederruflich gelöscht.\n\n1) Ja\n2) Nein\n3/4) Ja und nicht mehr anzeigen\n");
-		scanf_s("%i", Auswahl);
+		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen? die Elemente werden unwiederruflich geloescht.\n\n1) Ja\n2) Nein\n3) Ja und nicht mehr anzeigen\n");
+		*Auswahl = _getche() - 48;
+		printf("\n");
 
 		if (*Auswahl == 1) {
 			//Startpunkt Zeit
@@ -308,20 +311,32 @@ void dellist(strulist* list, int* Auswahl)
 			zurueck();
 		}
 		else if (*Auswahl == 3) {
-			*Auswahl = 4;
-		}
-		else if (*Auswahl == 4) {
+			//Startpunkt Zeit wenn "nicht mehr Anzeigen" ausgewählt wurde
+			clock_t StartZeit = clock();
 
+			while (list->pNext != NULL)
+			{
+				strulist* temp = list;
+				list = list->pNext;
+				free(temp->pData);
+				free(temp);
+			}
+
+			printf("Die Liste wurde Erfolgreich geloescht.\n");
+			//Endpunkt & Ausgabe Zeit
+			clock_t EndZeit = clock();
+			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
+			printf("Die loeschung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
+			//Rückkehr Menu
+			zurueck();
 		}
 		else {
-			printf("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und 4 ein.\n");
+			printf("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und ein.\n");
 			//Rückkehr Menu
 			zurueck();
 		}
 	}
-
-	if (*Auswahl == 4) {
-
+	else if (*Auswahl == 3) {
 		//Startpunkt Zeit wenn "nicht mehr Anzeigen" ausgewählt wurde
 		clock_t StartZeit = clock();
 
@@ -341,8 +356,8 @@ void dellist(strulist* list, int* Auswahl)
 		//Rückkehr Menu
 		zurueck();
 	}
-
 }
+
 
 //Funktion zum Aufruf von Menu
 void menu()
@@ -363,7 +378,9 @@ void menu()
 		printf("***************************************************\n");
 		//Abfrage Auswahl
 		Auswahl = 0;//Taste bleibt im Debugger stehen
-		scanf_s("%i", &Auswahl);
+		Auswahl = _getche() - 48;
+		printf("\n");
+//		scanf_s("%i", &Auswahl);
 		//Weiterleiung zu den jeweiligen Funktionen
 		if (Auswahl == 1) {
 			if (list == NULL) {
@@ -398,7 +415,7 @@ void menu()
 				dellist(list, pdelAuswahl);
 
 				//setzt list auf NULL, falls nicht "2) Nein" ausgewählt wurde.
-				if (*pdelAuswahl != 2 && *pdelAuswahl <= 4) {
+				if (*pdelAuswahl != 2 && *pdelAuswahl == 3) {
 					list = NULL;
 				}
 			}
@@ -415,8 +432,8 @@ void menu()
 			zurueck();
 		}
 		else {
-			printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
-			zurueck();
+			zurueck("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
+			//zurueck();
 		}
 	} while (Erfolgreich == false);
 }
