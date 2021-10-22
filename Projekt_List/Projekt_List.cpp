@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#include<string>
+#include<string.h>
+#include<stdarg.h>
 #include<conio.h>
 
 //Definition der structs "data" und "list"
@@ -19,9 +20,17 @@ typedef struct list
 } strulist;
 
 //Funktion zum zurückgehen
-void zurueck(const char* pText = NULL)
+void zurueck(const char* pFormat = NULL, ...)
 {
-	if (pText != NULL) printf("%s\n", pText);
+	char OutText[255];
+	va_list args;
+
+	va_start(args, pFormat);
+
+	if (pFormat != NULL) {
+		vsprintf_s(OutText, pFormat, args);
+		printf("%s\n", OutText);
+	}
 	printf("Druecke eine beliebige Taste um zurueck ins Hauptmenu zu kommen.");
 	system("pause > nul");
 }
@@ -51,12 +60,10 @@ strulist* createList()
 
 	// Liste erstellen
 	if (value == 0) {
-		printf("Es wurden keine Elemente erstellt.\n");
-		zurueck();
+		zurueck("Es wurden keine Elemente erstellt.\n");
 	}
 	else if (value > 10000000 || value < 0) {
-		printf("Eingabe ungueltig, bitte geben Sie eine Nummer zwischen 0 und 10000000 ein.\n\n");
-		zurueck();
+		zurueck("Eingabe ungueltig, bitte geben Sie eine Nummer zwischen 0 und 10000000 ein.\n\n");
 	}
 	else {
 		strulist* pLast = NULL;
@@ -93,10 +100,10 @@ strulist* createList()
 
 		clock_t EndZeit = clock();
 		double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
-		printf("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
+		//printf("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
 
 		//Rückkehr Menu
-		zurueck();
+		zurueck("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
 	}
 	return pStart;
 }
@@ -303,12 +310,10 @@ void dellist(strulist* list, int* Auswahl)
 			clock_t EndZeit = clock();
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			printf("Die loeschung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
-
 			zurueck();
 		}
 		else if (*Auswahl == 2) {
-			printf("Es wurden keine Elemente geloescht.\n");
-			zurueck();
+			zurueck("Es wurden keine Elemente geloescht.\n");
 		}
 		else if (*Auswahl == 3) {
 			//Startpunkt Zeit wenn "nicht mehr Anzeigen" ausgewählt wurde
@@ -331,9 +336,7 @@ void dellist(strulist* list, int* Auswahl)
 			zurueck();
 		}
 		else {
-			printf("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und ein.\n");
-			//Rückkehr Menu
-			zurueck();
+			zurueck("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und ein.\n");
 		}
 	}
 	else if (*Auswahl == 3) {
@@ -417,7 +420,6 @@ void menu()
 			}
 			else {
 				zurueck("Sie muessen erst eine Liste erstellen, damit sie geloescht werden kann.\n\n");
-				zurueck();
 			}
 		}
 		else if (Auswahl == 5) {
