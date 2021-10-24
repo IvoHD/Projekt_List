@@ -19,7 +19,7 @@ typedef struct list
 	struct data* pData;
 } strulist;
 
-//Funktion zum zurückgehen
+//Funktion zum zurückgehen inkl. Textübergabe
 void zurueck(const char* pFormat = NULL, ...)
 {
 	char OutText[255];
