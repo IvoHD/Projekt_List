@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#include<string>
+#include<string.h>
+#include<stdarg.h>
 #include<conio.h>
 
 //Definition der structs "data" und "list"
@@ -18,10 +19,18 @@ typedef struct list
 	struct data* pData;
 } strulist;
 
-//Funktion zum zurückgehen
-void zurueck(const char *pText = NULL)
+//Funktion zum zurückgehen inkl. Textübergabe
+void zurueck(const char* pFormat = NULL, ...)
 {
-	if (pText != NULL) printf("%s\n", pText);
+	char OutText[255];
+	va_list args;
+
+	va_start(args, pFormat);
+
+	if (pFormat != NULL) {
+		vsprintf_s(OutText, pFormat, args);
+		printf("%s\n", OutText);
+	}
 	printf("Druecke eine beliebige Taste um zurueck ins Hauptmenu zu kommen.");
 	system("pause > nul");
 }
@@ -51,12 +60,10 @@ strulist* createList()
 
 	// Liste erstellen
 	if (value == 0) {
-		printf("Es wurden keine Elemente erstellt.\n");
-		zurueck();
+		zurueck("Es wurden keine Elemente erstellt.\n");
 	}
-	else if (value > 10000000 || value < 0) { 
-		printf("Eingabe ungueltig, bitte geben Sie eine Nummer zwischen 0 und 10000000 ein.\n\n");
-		zurueck();
+	else if (value > 10000000 || value < 0) {
+		zurueck("Eingabe ungueltig, bitte geben Sie eine Nummer zwischen 0 und 10000000 ein.\n\n");
 	}
 	else {
 		strulist* pLast = NULL;
@@ -93,10 +100,10 @@ strulist* createList()
 
 		clock_t EndZeit = clock();
 		double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
-		printf("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
+		//printf("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
 
 		//Rückkehr Menu
-		zurueck();
+		zurueck("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
 	}
 	return pStart;
 }
@@ -118,7 +125,7 @@ void sortlist(strulist* list)
 	} while (Auswahl2 != 1 && Auswahl2 != 2 && Auswahl2 != 3);
 	//Abfrage aufsteigen, abgsteigend oder abbrechen
 
-	
+
 	if (Auswahl2 == 1)
 	{
 		do
@@ -189,10 +196,10 @@ void sortlist(strulist* list)
 		if (Auswahl == 1) {
 			//Startpunkt Zeit
 			clock_t StartZeit = clock();
-			
+
 			while (list->pNext != NULL)
 			{
-				if (strcmp(list->pData->bez,list->pNext->pData->bez) < 0){
+				if (strcmp(list->pData->bez, list->pNext->pData->bez) < 0) {
 					list = list->pNext;
 				}
 				else {
@@ -235,9 +242,9 @@ void sortlist(strulist* list)
 		}
 	}
 	else if (Auswahl2 == 3) {
-	printf("Sortierung wurde abgebrochen.\n");
-}
-	
+		printf("Sortierung wurde abgebrochen.\n");
+	}
+
 	//Rückkehr Menu
 	zurueck();
 }
@@ -303,12 +310,10 @@ void dellist(strulist* list, int* Auswahl)
 			clock_t EndZeit = clock();
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			printf("Die loeschung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
-
 			zurueck();
 		}
-		else if (*Auswahl == 2 ) {
-			printf("Es wurden keine Elemente geloescht.\n");
-			zurueck();
+		else if (*Auswahl == 2) {
+			zurueck("Es wurden keine Elemente geloescht.\n");
 		}
 		else if (*Auswahl == 3) {
 			//Startpunkt Zeit wenn "nicht mehr Anzeigen" ausgewählt wurde
@@ -331,9 +336,7 @@ void dellist(strulist* list, int* Auswahl)
 			zurueck();
 		}
 		else {
-			printf("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und ein.\n");
-			//Rückkehr Menu
-			zurueck();
+			zurueck("Auswahl ungueltig, bitte geben Sie eine Zahl zwischen 1 und ein.\n");
 		}
 	}
 	else if (*Auswahl == 3) {
@@ -380,15 +383,13 @@ void menu()
 		Auswahl = 0;//Taste bleibt im Debugger stehen
 		Auswahl = _getche() - 48;
 		printf("\n");
-//		scanf_s("%i", &Auswahl);
 		//Weiterleiung zu den jeweiligen Funktionen
 		if (Auswahl == 1) {
 			if (list == NULL) {
 				list = createList();
 			}
 			else {
-				printf("Um eine neue Liste zu erstellen, muss die alte erst geloescht werden.\n\n");
-				zurueck();
+				zurueck("Um eine neue Liste zu erstellen, muss die alte erst geloescht werden.\n\n");
 			}
 		}
 		else if (Auswahl == 2) {
@@ -396,8 +397,7 @@ void menu()
 				sortlist(list);
 			}
 			else {
-				printf("Sie muessen erst eine Liste erstellen, damit sie sortiert werden kann.\n\n");
-				zurueck();
+				zurueck("Sie muessen erst eine Liste erstellen, damit sie sortiert werden kann.\n\n");
 			}
 		}
 		else if (Auswahl == 3) {
@@ -405,8 +405,7 @@ void menu()
 				printlist(list);
 			}
 			else {
-				printf("Sie muessen erst eine Liste erstellen, damit sie ausgegeben werden kann.\n\n");
-				zurueck();
+				zurueck("Sie muessen erst eine Liste erstellen, damit sie ausgegeben werden kann.\n\n");
 			}
 
 		}
@@ -420,20 +419,17 @@ void menu()
 				}
 			}
 			else {
-				printf("Sie muessen erst eine Liste erstellen, damit sie geloescht werden kann.\n\n");
-				zurueck();
+				zurueck("Sie muessen erst eine Liste erstellen, damit sie geloescht werden kann.\n\n");
 			}
 		}
 		else if (Auswahl == 5) {
 			Erfolgreich = true;
 		}
 		else if (Auswahl == 6) {
-			printf("Herzlichen Glueckwunsch, sie haben ein Easteregg endeckt!\n\n");
-			zurueck();
+			zurueck("Herzlichen Glueckwunsch, sie haben ein Easteregg endeckt!\n\n");
 		}
 		else {
 			zurueck("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
-			//zurueck();
 		}
 	} while (Erfolgreich == false);
 }
