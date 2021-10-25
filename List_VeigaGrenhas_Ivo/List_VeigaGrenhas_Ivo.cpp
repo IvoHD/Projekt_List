@@ -225,7 +225,7 @@ void sortlist(strulist* list)
 		}
 		else if (Auswahl == 3) zurueck("Sortierung wurde abgebrochen.\n");
 	}
-	else if (Auswahl2 == 3) printf("Sortierung wurde abgebrochen.\n");
+	else if (Auswahl2 == 3) zurueck("Sortierung wurde abgebrochen.\n");
 }
 
 //Funktion zum Ausgeben der Liste
@@ -259,7 +259,7 @@ void dellist(strulist* list, int* Auswahl)
 	//"Sind Sie sicher"-Warnung
 	if (*Auswahl != 3) {
 		//Warnung und Abfrage Auswahl
-		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen? die Elemente werden unwiederruflich geloescht.\n\n1) Ja\n2) Nein\n3) Ja und nicht mehr anzeigen\n");
+		printf("Sind Sie sicher, dass sie alle Elemente aus der Liste loeschen wollen? Die Elemente werden unwiederruflich geloescht.\n\n1) Ja\n2) Nein\n3) Ja und nicht mehr anzeigen\n");
 		*Auswahl = _getche() - 48;
 		printf("\n");
 
