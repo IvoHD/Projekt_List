@@ -176,6 +176,7 @@ void sortlist(strulist* list)
 	}
 	else if (Auswahl2 == 2)
 	{
+		//Auswahl aufsteigend, absteigen oder abbrechen
 		do
 		{
 			printf("Bitte geben Sie 1 fuer aufsteigend sortiert, 2 fuer absteigend sortiert und 3 fuer abbrechen ein: ");
