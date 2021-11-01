@@ -22,8 +22,8 @@ typedef struct list
 
 void ausgabelist(strulist* list, int Awahl)
 {
-		if (list->pData == NULL) zurueck("Liste %i:/t/tStatus:/t leer", Awahl);
-		else  zurueck("Liste %i:/t/tStatus:/t befüllt", Awahl);
+		if (list->pData == NULL) printf("Liste %i:/t/tStatus:/t leer", Awahl);
+		else  printf("Liste %i:/t/tStatus:/t befüllt", Awahl);
 }
 
 
