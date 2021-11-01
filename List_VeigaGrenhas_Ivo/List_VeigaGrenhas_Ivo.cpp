@@ -8,7 +8,7 @@
 //Definition der structs "data" und "list"
 typedef struct data
 {
-	char bez[50];
+	char bez[2];
 	double preis;
 } strudata;
 
@@ -18,6 +18,14 @@ typedef struct list
 	struct list* pNext;
 	struct data* pData;
 } strulist;
+
+
+void ausgabelist(strulist* list, int Awahl)
+{
+		if (list->pData == NULL) zurueck("Liste %i:/t/tStatus:/t leer", Awahl);
+		else  zurueck("Liste %i:/t/tStatus:/t befüllt", Awahl);
+}
+
 
 //Funktion zum zurückgehen inkl. Textübergabe
 void zurueck(const char* pFormat = NULL, ...)
@@ -96,7 +104,6 @@ strulist* createList()
 
 		clock_t EndZeit = clock();
 		double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
-		//printf("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
 
 		//Rückkehr Menu
 		zurueck("Die Generierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", value, Dauer);
@@ -376,7 +383,7 @@ void Hauptmenu()
 	bool Erfolgreich = false;
 	bool Erfolgreich2 = false;
 	bool start = true;
-	list* pList = NULL; //strulist
+	strulist* pList = NULL; //strulist
 	int Awahl;
 	int Auswahl;
 
@@ -392,8 +399,8 @@ void Hauptmenu()
 			scanf_s("%i", &Awahl);
 
 			if (Awahl > 0 && Awahl < 100000) {
-				 pList = (list*)malloc(Awahl*sizeof(list*)); //strulist
-				 for (int i = 0; i <= Awahl; i++) pList[i] = NULL;
+				pList = (strulist*)malloc(Awahl*sizeof(strulist*)); //strulist
+				for (int i = 0; i <= Awahl; i++) *pList[i] = NULL;
 				Erfolgreich == true;
 			}
 			else printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 100000 ein.\n");
@@ -403,19 +410,24 @@ void Hauptmenu()
 
 	do {
 		Auswahl = _getche() - 48;
+		int* pAuswahl = &Auswahl;
 		printf("\n");
 
 		if (Auswahl == 1) {
 			printf("Welche Liste möchten sie bearbeiten?");
 			int send = _getche() - 48;
-			if (send < Auswahl && send > 0) menu(pList[send]);
+			
+			if (send < Auswahl && send > 0) menu(*pList[send]);
 			else zurueck("Bitte geben sie einen gültigen Wert ein.");
 		}
 		else if (Auswahl == 2) {
 			if (pList[0] == NULL) printf("Keine Listen generiert");
 			else
 			{
-				for (int i; i < Awahl; i++); //printf Anzahl Liste + Status...
+
+				for (int i; i < Awahl; i++) {
+					ausgabelist(pList[i], Auswahl); //printf Anzahl Liste + Status...
+				}
 			}
 		}
 	} while (Erfolgreich2 == false);
