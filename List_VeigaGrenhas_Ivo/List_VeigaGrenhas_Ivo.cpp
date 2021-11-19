@@ -19,23 +19,12 @@ typedef struct list
 	struct data* pData;
 } strulist;
 
-typedef struct pList
-{
-	bool Status;
-	struct list* pNext;
-} struplist;
+int getAnzahl(strulist*);
 
-
-void ausgabelist(strulist* plist, int Awahl, bool Elemente)
+void ausgabelist(strulist* list, int Awahl)
 {
-	if (Elemente) {
-		if (plist->Status) printf("Liste %i:/t/tAnzahl Elemente:/t %i\n", Awahl, getAnzahl(list));
-	}
-	else {
-		if (plist->Status == false) printf("Liste %i:/t/Anzahl Elemente:/t 0", Awahl);
-		else  printf("Liste %i:/t/tAnzahl Elemente:/t %i", Awahl, getAnzahl(list));
-	}
-	
+	if (list != NULL) printf("Liste %i:/t/tAnzahl Elemente:/t %i\n", Awahl, getAnzahl(list));
+	else printf("Liste %i:/t/Anzahl Elemente:/t 0", Awahl);
 }
 
 
@@ -69,11 +58,11 @@ int getAnzahl(strulist* list)
 }
 strulist* ListCompare(strulist* list1, strulist* list2) 
 {
-	//Muss noch ausprogrammiert werden.
+	return 0;//Muss noch ausprogrammiert werden.
 }
 strulist* EditList(strulist* list)
 {
-	//Muss noch ausprogrammiert werden.
+	return 0;//Muss noch ausprogrammiert werden.
 }
 
 //Funktion zum Erstellen der Liste
@@ -269,9 +258,11 @@ void printlist(strulist* list)
 	//Eigentliche Ausgabe mit Formatierung 
 	for (strulist* i = list; i != NULL; i = i->pNext)
 	{
+		printf("Preis=%7.1f	 Bez=%s\n", i->pData->bez, i->pData->bez);
+		/*
 		if (i->pData->preis < 100) printf("Preis=00%.1f  Bez=%s\n", i->pData->preis, i->pData->bez);
 		else if (i->pData->preis >= 1000) printf("Preis=%.1f  Bez=%s\n", i->pData->preis, i->pData->bez);
-		else printf("Preis=0%.1f  Bez=%s\n", i->pData->preis, i->pData->bez);
+		else printf("Preis=0%.1f  Bez=%s\n", i->pData->preis, i->pData->bez); */
 	}
 	//Endpunkt, Ausgabe Zeit & zurück ins Menu
 	clock_t EndZeit = clock();
@@ -395,20 +386,16 @@ void menu(strulist* list)
 		else if (Auswahl == 5) Erfolgreich = true;
 		else if (Auswahl == 6) zurueck("Herzlichen Glueckwunsch, sie haben ein Easteregg endeckt!\n\n");
 		else zurueck("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 5 ein.\n\n");
-	} while (Erfolgreich == false);
+	} while (!Erfolgreich);
 }
 
 void Hauptmenu()
 {
 	bool Erfolgreich = false;
 	bool Erfolgreich2 = false;
-	bool Erfolgreich3 = false;
-	bool Erfolgreich4 = false;
-	bool Erfolgreich5 = false;
-	bool Erfolgreich6 = false;
 	bool start = true;
-	strulist* pList = NULL; //strulist
-	int Awahl;
+	strulist** pStartList = NULL; //strulist
+	int size;
 	int Auswahl;
 
 	//Abfrage Auswahl
@@ -416,11 +403,11 @@ void Hauptmenu()
 		do
 		{
 			printf("Wie viele listen wollen Sie erstellen?\n");
-			scanf_s("%i", &Awahl);
+			scanf_s("%i", &size);
 
-			if (Awahl > 0 && Awahl < 100000) {
-				pList = (strulist*)malloc(Awahl * sizeof(strulist*)); //strulist
-				for (int i = 0; i <= Awahl; i++)* pList[i] = NULL, pList->pNext = NULL, pList->Status = false;
+			if (size > 0 && size < 100000) {
+				pStartList = (strulist**)malloc(size * sizeof(strulist*)); //strulist
+				for (int i = 0; i <= size; i++) pStartList[i] = NULL;
 				Erfolgreich == true;
 			}
 			else printf("Auswahl ungueltig, bitte geben Sie einen Wert zwischen 1 und 100000 ein.\n");
@@ -431,7 +418,7 @@ void Hauptmenu()
 	do {
 		system("CLS");
 		printf("******************** Hauptmenu ********************\n");
-		printf("Folgende Optionen stehen zur Verfuegung: \n\t1) Liste bearbeiten \n\t2) Liste Ausgeben\n\t3) Liste vergleichen\n\t4) Elemente bearbeiten\n\t5)Programm beenden\nWaehlen Sie einer der aufgelisteten Optionen auf, indem Sie die zugewiesenen Zahlen eingeben.\n");
+		printf("Folgende Optionen stehen zur Verfuegung: \n\t1) Liste bearbeiten \n\t2) Liste Ausgeben\n\t3) Liste vergleichen\n\t4) Elemente bearbeiten\n\t5) Programm beenden\nWaehlen Sie einer der aufgelisteten Optionen auf, indem Sie die zugewiesenen Zahlen eingeben.\n");
 		printf("***************************************************\n");
 
 		Auswahl = _getche() - 48;
@@ -439,69 +426,71 @@ void Hauptmenu()
 		printf("\n");
 
 		if (Auswahl == 1) {
+			Erfolgreich = false;
 			do {
-				for (int i; i < Awahl; i++) {
-					ausgabelist(pList[i], Auswahl, 0); //printf Anzahl Liste + Status...
-				}
 				printf("\nWelche Liste möchten sie bearbeiten?");
 				Auswahl = _getche() - 48;
-				if (Auswahl <= Awahl && Auswahl > 0)
+				if (Auswahl <= size && Auswahl > 0)
 				{
-					menu(*pList[send]->pNext);
-					Erfolgreich3 = true;
+					menu(pStartList[Auswahl]);
+					Erfolgreich = true;
 				}
-				else zurueck("Bitte geben sie einen gültigen Wert ein.");
-			} while (Erfolgreich3);
+				else zurueck("Bitte geben sie einen gültigen Wert ein.\n");
+			} while (!Erfolgreich);
 		}
 
 		else if (Auswahl == 2) {
-			if (pList[0] == NULL) printf("Keine Listen generiert");
+			if (pStartList[0] == NULL) printf("Keine Listen generiert.\n");
 			else
 			{
-				for (int i; i < Awahl; i++) {
-					ausgabelist(pList[i], Auswahl, 0); //printf Anzahl Liste + Status...
+				for (int i = 0; i < size; i++) {
+					ausgabelist(pStartList[i], Auswahl); //printf Anzahl Liste + Status...
 				}
 			}
 		}
 		else if (Auswahl == 3) {
 			int compA1 = 0;
 			int compA2 = 0;
-			if (pList[0] == NULL) printf("Keine Listen generiert\n");
+			if (pStartList[0] == NULL) printf("Keine Listen generiert.\n");
 			else
 			{
+				Erfolgreich = false;
 				do {
-					printf("Waehlen Sie die erste Liste, die Sie vergleichen wollen.\n");
+					printf("Waehlen Sie die erste Liste, die Sie vergleichen wollen. Geben Sie -1 ein, um zurück ins Hauptmenu zu kommen.\n");
 					compA1 = _getche() - 48;
-					if (compA1 > 0 && compA1 < Awahl) Erfolgreich5 = true;
+					if (compA1 >= -1 && compA1 < size) Erfolgreich = true;
 					else printf("Bitte geben Sie einen gültigen Wert ein.\n");
-				} while (Erfolgreich5);
-
-				do {
-					printf("Waehlen Sie die zweite Liste, die Sie vergleichen wollen.\n");
-					compA2 = _getche() - 48;
-					if (compA2 > 0 && compA2 < Awahl) Erfolgreich6 = true;
-					else printf("Bitte geben Sie einen gültigen Wert ein.\n");
-				} while (Erfolgreich6);
-				ListCompare(pList[compA1]->pNext, pList[compA2]->pNext); // Muss noch ausprogrammiert werden.
+				} while (!Erfolgreich);
+				if (compA1 != -1) {
+					Erfolgreich = false;
+					do {
+						printf("Waehlen Sie die zweite Liste, die Sie vergleichen wollen. Geben Sie -1 ein, um zurück ins Hauptmenu zu kommen.\n");
+						compA2 = _getche() - 48;
+						if (compA2 >= -1 && compA2 < size) Erfolgreich = true;
+						else printf("Bitte geben Sie einen gültigen Wert ein.\n");
+					} while (!Erfolgreich);
+				}
+				if  (compA1 == -1 || compA2 == -1) zurueck("Es wurden keine Listen verglichen.\n");
+				
 			}
 		}
 		else if (Auswahl == 4) {
-			for (int i; i < Awahl; i++) {
-				ausgabelist(pList[i], Auswahl, 0); //printf Anzahl Liste + Status...
+			Erfolgreich = false;
+			for (int i = 0; i < size; i++) {
+				ausgabelist(pStartList[i], Auswahl); //printf Anzahl Liste + Status...
 			}
 			do {
 				printf("\nWelche Elemente von welcher Liste möchten Sie bearbeiten? Falls keine Listen aufgeführt werden, müssen Sie erst eine Liste bearbeite. Geben Sie 0 ein, um zurueck ins Hauptmenu zu kommen.");
 				Auswahl = _getche() - 48;
-				if (Auswahl == 0) Erfolgreich4 = true;
-				else if (Auswahl > 0 && Auswahl < Awahl)
-					Erfolgreich4 = true;
-				EditList(pList[Auswahl]->pNext);	//muss ausprogrammiert werden
+				if (Auswahl >= 0 && Auswahl < size) {
+					Erfolgreich = true;
+					EditList(pStartList[Auswahl]->pNext);	//muss ausprogrammiert werden
+				}
 				else printf("Bitte geben Sie einen gültigen Wert ein.\n");
-			} while (Erfolgreich4);
+			} while (Erfolgreich);
 		}
-			
 		else if (Auswahl == 5) Erfolgreich2 = true;
-	} while (Erfolgreich2);
+	} while (!Erfolgreich2);
 }
 
 int main()
