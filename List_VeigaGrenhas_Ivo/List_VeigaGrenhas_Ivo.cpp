@@ -4,7 +4,6 @@
 #include<string.h>
 #include<stdarg.h>
 #include<conio.h>
-
 //Definition der structs "data" und "list"
 typedef struct data
 {
@@ -17,6 +16,7 @@ typedef struct list
 {
 	struct list* pNext;
 	struct data* pData;
+	bool sorted;
 } strulist;
 
 int getAnzahl(strulist*);
@@ -37,18 +37,17 @@ void zurueck(const char* pFormat = NULL, ...)
 	system("pause > nul");
 }
 
-void ausgabelist(strulist* list, int size, bool t)
+void ausgabelist(strulist** list, int size, bool t)
 {
 	if (t) {
 		for (int i = 0; i < size; i++) {
-			if (list != NULL) printf("Liste %i:\tAnzahl Elemente:  %i\n", i, getAnzahl(list));
+			if (list[i] != NULL) printf("Liste %i:\tAnzahl Elemente:  %i\t Liste Sortiert: %s\n", (i + 1), getAnzahl(list[i]), list[i]->sorted ? "Ja" : "Nein");
 		}
 	}
 	else {
-
 		for (int i = 0; i < size; i++) {
-			if (list != NULL) printf("Liste %i:\tAnzahl Elemente:  %i\n", i, getAnzahl(list));
-			else printf("Liste %i:\tAnzahl Elemente:  NULL\n", i);
+			if (list[i] != NULL) printf("Liste %i:\tAnzahl Elemente:  %i\t Liste Sortiert: %s\n", (i + 1), getAnzahl(list[i]), list[i]->sorted ? "Ja" : "Nein");
+			else printf("Liste %i:\tAnzahl Elemente:  NULL\n", (i+1));
 		}
 	}
 	zurueck();
@@ -63,7 +62,7 @@ int getAnzahl(strulist* list)
 		list = list->pNext;
 		Anzahl++;
 	}
-	return(Anzahl);
+	return Anzahl;
 }
 strulist* ListCompare(strulist* list1, strulist* list2) 
 {
@@ -113,7 +112,7 @@ strulist* createList()
 			//Elementgenerierung 
 
 			pNew->pData->preis = rand() % (999 - 10 + 1) + 10 + rand() % (10) / 10.0;
-
+			pNew->sorted = false;
 			if (pStart == NULL) pStart = pNew;
 			if (pLast != NULL) pLast->pNext = pNew;
 			pLast = pNew;
@@ -174,6 +173,7 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
+			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", Anzahl, Dauer);
 		}
@@ -194,6 +194,7 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
+			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
 		}
@@ -226,6 +227,7 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
+			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", Anzahl, Dauer);
 		}
@@ -246,6 +248,7 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
+			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
 		}
@@ -442,11 +445,11 @@ void Hauptmenu(strulist** pStartList)
 		if (Auswahl == 1) {
 			Erfolgreich = false;
 			do {
-				printf("\nWelche Liste moechten sie bearbeiten?");
+				printf("\nWelche Liste moechten sie bearbeiten?\n");
 				Auswahl = _getche() - 48;
 				if (Auswahl <= size && Auswahl >= 0)
 				{
-					pStartList[Auswahl] = menu(pStartList[Auswahl]);
+					pStartList[(Auswahl - 1)] = menu(pStartList[(Auswahl - 1)]);
 					Erfolgreich = true;
 				}
 				else printf("Bitte geben sie einen gueltigen Wert ein.\n");
@@ -456,7 +459,7 @@ void Hauptmenu(strulist** pStartList)
 		else if (Auswahl == 2) {
 			/*if (pStartList[] == NULL) printf("Keine Listen generiert.\n");
 			*/
-			ausgabelist(pStartList[0], size, 0); //printf Anzahl Liste + Status...
+			ausgabelist(pStartList, size, false); //printf Anzahl Liste + Status...
 			
 		}
 		else if (Auswahl == 3) {
@@ -470,7 +473,7 @@ void Hauptmenu(strulist** pStartList)
 					printf("Waehlen Sie die erste Liste, die Sie vergleichen wollen. Geben Sie -1 ein, um zurück ins Hauptmenu zu kommen.\n");
 					compA1 = _getche() - 48;
 					if (compA1 >= -1 && compA1 < size) Erfolgreich = true;
-					else printf("Bitte geben Sie einen gültigen Wert ein.\n");
+					else zurueck("Bitte geben Sie einen gültigen Wert ein.\n");
 				} while (!Erfolgreich);
 				if (compA1 != -1) {
 					Erfolgreich = false;
@@ -478,7 +481,7 @@ void Hauptmenu(strulist** pStartList)
 						printf("Waehlen Sie die zweite Liste, die Sie vergleichen wollen. Geben Sie -1 ein, um zurück ins Hauptmenu zu kommen.\n");
 						compA2 = _getche() - 48;
 						if (compA2 >= -1 && compA2 < size) Erfolgreich = true;
-						else printf("Bitte geben Sie einen gültigen Wert ein.\n");
+						else zurueck("Bitte geben Sie einen gültigen Wert ein.\n");
 					} while (!Erfolgreich);
 				}
 				if  (compA1 == -1 || compA2 == -1) zurueck("Es wurden keine Listen verglichen.\n");
@@ -487,7 +490,7 @@ void Hauptmenu(strulist** pStartList)
 		}
 		else if (Auswahl == 4) {
 				Erfolgreich = false;
-				ausgabelist(pStartList[0], Auswahl, true); //printf Anzahl Liste + Status...
+				ausgabelist(pStartList, Auswahl, true); //printf Anzahl Liste + Status...
 			do {
 				printf("\nWelche Elemente von welcher Liste möchten Sie bearbeiten? Falls keine Listen aufgeführt werden, müssen Sie erst eine Liste bearbeite. Geben Sie 0 ein, um zurueck ins Hauptmenu zu kommen.");
 				Auswahl = _getche() - 48;
@@ -495,7 +498,7 @@ void Hauptmenu(strulist** pStartList)
 					Erfolgreich = true;
 					EditList(pStartList[Auswahl]->pNext);	//muss ausprogrammiert werden
 				}
-				else printf("Bitte geben Sie einen gültigen Wert ein.\n");
+				else zurueck("Bitte geben Sie einen gültigen Wert ein.\n");
 			} while (Erfolgreich);
 		}
 		else if (Auswahl == 5) Erfolgreich2 = true;
