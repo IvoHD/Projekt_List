@@ -160,6 +160,7 @@ void sortlist(strulist* list)
 			//Startpunkt Zeit
 			clock_t StartZeit = clock();
 
+			list->sorted = true;
 			while (list->pNext != NULL)
 			{
 				if (list->pData->preis <= list->pNext->pData->preis) list = list->pNext;
@@ -173,7 +174,6 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
-			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", Anzahl, Dauer);
 		}
@@ -181,6 +181,7 @@ void sortlist(strulist* list)
 			//Startpunkt Zeit
 			clock_t StartZeit = clock();
 
+			list->sorted = true;
 			while (list->pNext != NULL)
 			{
 				if (list->pData->preis >= list->pNext->pData->preis) list = list->pNext;
@@ -194,7 +195,6 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
-			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
 		}
@@ -214,12 +214,13 @@ void sortlist(strulist* list)
 			//Startpunkt Zeit
 			clock_t StartZeit = clock();
 
+			list->sorted = true;
 			while (list->pNext != NULL)
 			{
 				if (strcmp(list->pData->bez, list->pNext->pData->bez) < 0) list = list->pNext;
 				else {
 					strudata* temp = list->pData;
-
+					
 					list->pData = list->pNext->pData;
 					list->pNext->pData = temp;
 					list = reset;
@@ -227,13 +228,14 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
-			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i von Elementen hat %.3lf Sekunden gedauert.\n", Anzahl, Dauer);
 		}
 		else if (Auswahl == 2) {
 			//Startpunkt Zeit
 			clock_t StartZeit = clock();
+
+			list->sorted = true;
 
 			while (list->pNext != NULL)
 			{
@@ -248,7 +250,6 @@ void sortlist(strulist* list)
 			}
 			//Endpunkt & Ausgabe Zeit
 			clock_t EndZeit = clock();
-			list->sorted = true;
 			double Dauer = ((double)EndZeit - (double)StartZeit) / (double)CLOCKS_PER_SEC;
 			zurueck("Die Sortierung von %i Elementen hat %.3lf Sekunden gedauert.\n\n", Anzahl, Dauer);
 		}
@@ -446,7 +447,7 @@ void Hauptmenu(strulist** pStartList)
 			Erfolgreich = false;
 			do {
 				printf("\nWelche Liste moechten sie bearbeiten?\n");
-				Auswahl = _getche() - 48;
+				scanf_s("%i", pAuswahl);
 				if (Auswahl <= size && Auswahl >= 0)
 				{
 					pStartList[(Auswahl - 1)] = menu(pStartList[(Auswahl - 1)]);
